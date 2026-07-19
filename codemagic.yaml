@@ -15,13 +15,16 @@ workflows:
       branch_patterns:
         - pattern: 'main'
     scripts:
+      - name: Git LFS files checkout
+        script: | 
+          git lfs pull
       - name: Fix Unity Script Permissions
         script: |
           chmod +x process_symbols.sh || true
       - name: Initialize keychain and code signing
         script: |
           keychain initialize
-          xcode-project use-profiles --bundle-identifier="com.solmaz.blokgame"
+          xcode-project use-profiles
       - name: Increment build number
         script: |
           agvtool new-version -all $BUILD_NUMBER
@@ -29,10 +32,7 @@ workflows:
         script: |
           xcode-project build-ipa \
             --project "$XCODE_PROJECT" \
-            --scheme "$XCODE_SCHEME"
-    publishing:
-      app_store_connect:
-        auth: integration
-        submit_to_testflight: true
+            --scheme "$XCODE_SCHEME" \
+            --archive-xcargs "PRODUCT_BUNDLE_IDENTIFIER=com.solmaz.blokgame CODE_SIGN_STYLE=Automatic"
     artifacts:
       - build/ios/ipa/*.ipa
