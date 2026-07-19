@@ -18,6 +18,9 @@ workflows:
       - name: Git LFS files checkout
         script: | 
           git lfs pull
+      - name: Fix Unity Script Permissions
+        script: |
+          chmod +x process_symbols.sh || true
       - name: Initialize keychain and code signing
         script: |
           keychain initialize
@@ -29,6 +32,7 @@ workflows:
         script: |
           xcode-project build-ipa \
             --project "$XCODE_PROJECT" \
-            --scheme "$XCODE_SCHEME"
+            --scheme "$XCODE_SCHEME" \
+            --bundle-identifier "com.solmaz.blokgame"
     artifacts:
       - build/ios/ipa/*.ipa
