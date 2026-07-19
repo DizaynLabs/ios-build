@@ -21,7 +21,7 @@ workflows:
       - name: Initialize keychain and code signing
         script: |
           keychain initialize
-          xcode-project use-profiles
+          xcode-project use-profiles --allow-provisioning-updates
       - name: Increment build number
         script: |
           agvtool new-version -all $BUILD_NUMBER
