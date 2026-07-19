@@ -23,7 +23,7 @@ workflows:
       - name: Initialize keychain and code signing
         script: |
           keychain initialize
-          app-store-connect fetch-signing-files "com.Solmazdijital.ios-build" --platform IOS --type IOS_APP_STORE --create
+          app-store-connect fetch-signing-files "com.Solmazdijital.ios-build" --platform IOS --type IOS_APP_STORE --create --certificate-key
           keychain add-certificates
       - name: Increment build number
         script: |
