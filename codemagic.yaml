@@ -18,6 +18,9 @@ workflows:
       - name: Git LFS files checkout
         script: | 
           git lfs pull
+      - name: Fix Unity Script Permissions
+        script: |
+          chmod +x process_symbols.sh
       - name: Initialize keychain and code signing
         script: |
           keychain initialize
