@@ -18,9 +18,6 @@ workflows:
       - name: Git LFS files checkout
         script: | 
           git lfs pull
-      - name: Fix Unity Script Permissions
-        script: |
-          chmod +x process_symbols.sh
       - name: Initialize keychain and code signing
         script: |
           keychain initialize
@@ -32,7 +29,6 @@ workflows:
         script: |
           xcode-project build-ipa \
             --project "$XCODE_PROJECT" \
-            --scheme "$XCODE_SCHEME" \
-            --archive-xcargs "CODE_SIGNING_ALLOWED=NO"
+            --scheme "$XCODE_SCHEME"
     artifacts:
       - build/ios/ipa/*.ipa
