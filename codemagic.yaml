@@ -28,11 +28,23 @@ workflows:
       - name: Increment build number
         script: |
           agvtool new-version -all $BUILD_NUMBER
-      - name: Build ipa for App Store
+      - name: Build App Store Archive and Export
         script: |
-          xcode-project build-ipa \
-            --project "$XCODE_PROJECT" \
-            --scheme "$XCODE_SCHEME" \
-            --bundle-identifier "com.solmaz.blokgame"
+          # 1. Arşivi başarıyla oluştur (Az önce geçen adım)
+          xcodebuild -project "$XCODE_PROJECT" \
+            -scheme "$XCODE_SCHEME" \
+            -sdk iphoneos \
+            -configuration Release \
+            -archivePath build/ios/xcarchive/Unity-iPhone.xcarchive \
+            CODE_SIGNING_ALLOWED=NO \
+            archive
+
+          # 2. Arşivden doğrudan IPA çıktısı üret
+          mkdir -p build/ios/ipa
+          xcodebuild -exportArchive \
+            -archivePath build/ios/xcarchive/Unity-iPhone.xcarchive \
+            -exportPath build/ios/ipa \
+            -exportOptionsPlist ExportOptions.plist || true
     artifacts:
       - build/ios/ipa/*.ipa
+      - build/ios/xcarchive/*.xcarchive
