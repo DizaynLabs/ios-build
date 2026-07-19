@@ -25,12 +25,15 @@ workflows:
       - name: Increment build number
         script: |
           agvtool new-version -all $BUILD_NUMBER
-      - name: Build ipa for App Store
+      - name: Build App Store Archive
         script: |
-          xcode-project build-ipa \
-            --project "$XCODE_PROJECT" \
-            --scheme "$XCODE_SCHEME" \
-            --archive-xcargs "CODE_SIGN_STYLE=Automatic" \
-            --archive-flags="-allowProvisioningUpdates"
+          xcodebuild -project "$XCODE_PROJECT" \
+            -scheme "$XCODE_SCHEME" \
+            -sdk iphoneos \
+            -configuration Release \
+            -archivePath build/ios/xcarchive/Unity-iPhone.xcarchive \
+            -allowProvisioningUpdates \
+            CODE_SIGN_STYLE=Automatic \
+            archive
     artifacts:
-      - build/ios/ipa/*.ipa
+      - build/ios/xcarchive/*.xcarchive
