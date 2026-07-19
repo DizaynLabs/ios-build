@@ -15,36 +15,24 @@ workflows:
       branch_patterns:
         - pattern: 'main'
     scripts:
-      - name: Git LFS files checkout
-        script: | 
-          git lfs pull
       - name: Fix Unity Script Permissions
         script: |
           chmod +x process_symbols.sh || true
       - name: Initialize keychain and code signing
         script: |
           keychain initialize
-          xcode-project use-profiles
+          xcode-project use-profiles --bundle-identifier="com.solmaz.blokgame"
       - name: Increment build number
         script: |
           agvtool new-version -all $BUILD_NUMBER
-      - name: Build App Store Archive and Export
+      - name: Build ipa for App Store
         script: |
-          # 1. Arşivi başarıyla oluştur (Az önce geçen adım)
-          xcodebuild -project "$XCODE_PROJECT" \
-            -scheme "$XCODE_SCHEME" \
-            -sdk iphoneos \
-            -configuration Release \
-            -archivePath build/ios/xcarchive/Unity-iPhone.xcarchive \
-            CODE_SIGNING_ALLOWED=NO \
-            archive
-
-          # 2. Arşivden doğrudan IPA çıktısı üret
-          mkdir -p build/ios/ipa
-          xcodebuild -exportArchive \
-            -archivePath build/ios/xcarchive/Unity-iPhone.xcarchive \
-            -exportPath build/ios/ipa \
-            -exportOptionsPlist ExportOptions.plist || true
+          xcode-project build-ipa \
+            --project "$XCODE_PROJECT" \
+            --scheme "$XCODE_SCHEME"
+    publishing:
+      app_store_connect:
+        auth: integration
+        submit_to_testflight: true
     artifacts:
       - build/ios/ipa/*.ipa
-      - build/ios/xcarchive/*.xcarchive
