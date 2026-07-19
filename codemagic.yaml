@@ -34,6 +34,7 @@ workflows:
             -archivePath build/ios/xcarchive/Unity-iPhone.xcarchive \
             -allowProvisioningUpdates \
             CODE_SIGN_STYLE=Automatic \
+            DEVELOPMENT_TEAM=YAZ_BURAYA_TEAM_ID \
             archive
     artifacts:
       - build/ios/xcarchive/*.xcarchive
